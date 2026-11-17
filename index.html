@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Packaging Automation Engineering Calculators | YIXING (primelabeler.com & dgyxauto.com)</title>
+  <meta name="description" content="Open-source calculators for YIXING labeling & taping tolerance stack-up (RSS vs Worst-Case), 500 mm/s roll-fed tape cycle yield, and 3D carton erector / FEFCO 0427 mailer sizing." />
+  <style>
+    :root {
+      --bg: #f8fafc; --card: #ffffff; --ink: #0f172a; --muted: #475569;
+      --border: #e2e8f0; --brand: #1d4ed8; --brand-soft: #eff6ff; --warn: #b45309;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    header { background: #0f172a; color: #fff; padding: 28px 20px; }
+    .wrap { max-width: 1080px; margin: 0 auto; }
+    .topbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+    h1 { margin: 0 0 6px; font-size: 1.5rem; }
+    .sub { margin: 0; color: #cbd5e1; font-size: 0.92rem; }
+    .lang-btn { background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 6px; padding: 7px 13px; cursor: pointer; font-weight: 600; }
+    main { padding: 24px 20px 40px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(315px, 1fr)); gap: 20px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(15,23,42,.05); }
+    .card h2 { margin: 0 0 8px; font-size: 1.08rem; color: var(--brand); }
+    .card p.desc { margin: 0 0 14px; font-size: 0.86rem; color: var(--muted); }
+    label { display: block; font-size: 0.83rem; font-weight: 600; margin: 10px 0 4px; }
+    input, select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.92rem; }
+    .result { margin-top: 16px; padding: 12px 14px; background: var(--brand-soft); border-left: 4px solid var(--brand); border-radius: 6px; font-size: 0.88rem; }
+    .hubs { margin-top: 28px; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+    .hubs h2 { margin: 0 0 10px; font-size: 1.05rem; }
+    .hub-links { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 0.88rem; }
+    footer { border-top: 1px solid var(--border); padding: 20px; text-align: center; font-size: 0.84rem; color: var(--muted); background: #fff; }
+    a { color: var(--brand); text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div>
+        <h1 data-en="YIXING Packaging Automation Engineering Calculators" data-zh="壹星（YIXING）贴标 · 自动贴胶 · 立体折盒工程选型计算器">YIXING Packaging Automation Engineering Calculators</h1>
+        <p class="sub" data-en="Open engineering reference by Dongguan Yixing Automation Equipment Co., Ltd. (~3,000 m² Shipai, Dongguan plant · 10 CN patents) — machine repeatability excludes incoming part & die-cut tolerances." data-zh="东莞市壹星自动化设备有限公司（石排大帽子文创园4楼约3000㎡车间 · 10项有效专利）开源核算工具 — 设备自身精度均不含来料与模切公差。">Open engineering reference by Dongguan Yixing Automation Equipment Co., Ltd. (~3,000 m² Shipai, Dongguan plant · 10 CN patents) — machine repeatability excludes incoming part & die-cut tolerances.</p>
+      </div>
+      <button class="lang-btn" id="langToggle" type="button">切换中文 / EN</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <section class="card">
+        <h2 data-en="1. YIXING Labeling & Taping Tolerance Stack-Up Calculator" data-zh="1. 壹星贴标与贴胶总公差叠加反推计算器">1. YIXING Labeling & Taping Tolerance Stack-Up Calculator</h2>
+        <p class="desc" data-en="Distinguish ±0.05 mm dual-camera CCD vision labelers from ±0.5 mm CCD vision tape applicators and ±1.0 mm mechanical fixtures." data-zh="严格区分 ±0.05mm 双镜头视觉贴标机、±0.5mm 视觉贴胶机与 ±1.0mm 常规治具定位机型。">Distinguish ±0.05 mm dual-camera CCD vision labelers from ±0.5 mm CCD vision tape applicators and ±1.0 mm mechanical fixtures.</p>
+        <label data-en="Target Finished Placement Tolerance (± mm)" data-zh="成品允许总贴附偏差 (± mm)">Target Finished Placement Tolerance (± mm)</label>
+        <input type="number" id="tolTarget" value="0.50" step="0.05" min="0.05" />
+        <label data-en="Incoming Workpiece / Container Tolerance (± mm)" data-zh="工件外壳/瓶体来料公差 (± mm)">Incoming Workpiece / Container Tolerance (± mm)</label>
+        <input type="number" id="tolPart" value="0.25" step="0.05" min="0" />
+        <label data-en="Die-Cut Label / Tape Slitting Tolerance (± mm)" data-zh="标签/工业胶带模切分条公差 (± mm)">Die-Cut Label / Tape Slitting Tolerance (± mm)</label>
+        <input type="number" id="tolMat" value="0.15" step="0.05" min="0" />
+        <div class="result" id="tolOut"></div>
+      </section>
+
+      <section class="card">
+        <h2 data-en="2. YIXING 500 mm/s Industrial Tape Applicator Cycle Estimator" data-zh="2. 壹星 500mm/s 全自动贴胶节拍与单卷产量测算器">2. YIXING 500 mm/s Industrial Tape Applicator Cycle Estimator</h2>
+        <p class="desc" data-en="Model hourly output (pcs/h) for double-sided tissue, acrylic foam, and polyimide (PI) high-temp tapes (76 mm core / ≤250 mm OD)." data-zh="针对双面胶、亚克力泡棉胶与 PI 高温胶带（≥30mm 气动裁切、76mm 卷芯）测算真实小时产能。">Model hourly output (pcs/h) for double-sided tissue, acrylic foam, and polyimide (PI) high-temp tapes (76 mm core / ≤250 mm OD).</p>
+        <label data-en="Tape Strip Cut Length (mm, standard ≥30 mm)" data-zh="单段裁切胶带长度 (mm，标准气动刀 ≥30mm)">Tape Strip Cut Length (mm, standard ≥30 mm)</label>
+        <input type="number" id="tapeLen" value="60" step="5" min="15" />
+        <label data-en="Strips Applied per Workpiece" data-zh="每件产品贴胶条数">Strips Applied per Workpiece</label>
+        <input type="number" id="tapeCount" value="2" step="1" min="1" />
+        <label data-en="Platform & Loading Architecture" data-zh="机台与上下料架构">Platform & Loading Architecture</label>
+        <select id="tapeMode">
+          <option value="3.2">Manual Jig — Desktop 300×300 / 2-Axis 650×650 (~3.2s)</option>
+          <option value="1.6">Rotary Liner-Peeling / Inline Conveyor (~1.6s)</option>
+          <option value="1.2">CCD Vision Auto-Load Stage ±0.5 mm (~1.2s)</option>
+        </select>
+        <label data-en="Roll Length (meters, e.g. 33m foam / 50m tissue)" data-zh="整卷胶带米数 (m，如泡棉胶 33m / 双面胶 50m)">Roll Length (meters, e.g. 33m foam / 50m tissue)</label>
+        <input type="number" id="rollMeters" value="50" step="5" min="5" />
+        <div class="result" id="tapeOut"></div>
+      </section>
+
+      <section class="card">
+        <h2 data-en="3. YIXING 3D Carton Erector & FEFCO 0427 Mailer Matcher" data-zh="3. 壹星 YX-KB/CS/CH 立体折盒机与飞机盒成型选型器">3. YIXING 3D Carton Erector & FEFCO 0427 Mailer Matcher</h2>
+        <p class="desc" data-en="Match end-of-line 3D carton erecting (15–75 boxes/min, distinct from print-shop flat folder-gluers) by L×W×H and board gsm." data-zh="按成盒尺寸与克重（250–600g/m²）匹配产线末端 3D 扣底、插舌彩盒及微瓦楞飞机盒成型机。">Match end-of-line 3D carton erecting (15–75 boxes/min, distinct from print-shop flat folder-gluers) by L×W×H and board gsm.</p>
+        <label data-en="3D Box / Mailer Structure" data-zh="立体盒型结构">3D Box / Mailer Structure</label>
+        <select id="boxType">
+          <option value="kb">Lock-Bottom / Crash-Lock Carton (YX-KB 扣底/自锁底)</option>
+          <option value="cs">Tuck-End / Dual-Mode Color Box (YX-CS 插舌彩盒)</option>
+          <option value="ch">Scratch-Free Laminated / FEFCO 0427 Mailer (YX-CH 彩盒/飞机盒)</option>
+        </select>
+        <label data-en="Erected Length × Width × Height (mm)" data-zh="成盒 长 L × 宽 W × 高 H (mm)">Erected Length × Width × Height (mm)</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+          <input type="number" id="boxL" value="160" min="30" placeholder="L" />
+          <input type="number" id="boxW" value="110" min="20" placeholder="W" />
+          <input type="number" id="boxH" value="80" min="15" placeholder="H" />
+        </div>
+        <label data-en="Paperboard Grammage (gsm, standard 250–600)" data-zh="纸板克重 (g/m²，标准范围 250–600)">Paperboard Grammage (gsm, standard 250–600)</label>
+        <input type="number" id="boxGsm" value="350" step="25" min="180" />
+        <div class="result" id="boxOut"></div>
+      </section>
+    </div>
+
+    <section class="hubs">
+      <h2 data-en="Official YIXING Technical Catalogs & Multilingual Specification Hubs" data-zh="东莞壹星（YIXING）官方技术中心与多语种选型入口">Official YIXING Technical Catalogs & Multilingual Specification Hubs</h2>
+      <div class="hub-links">
+        <a href="https://primelabeler.com/en/">International Home (EN)</a>
+        <a href="https://primelabeler.com/en/labeling-machines/">Automatic & Vision Labelers (60–200 pcs/min · ±0.05 mm)</a>
+        <a href="https://primelabeler.com/en/tape-applicators/">500 mm/s Tape & 450 mm Film Applicators</a>
+        <a href="https://primelabeler.com/en/box-folding-machines/">YX-KB/CS/CH 3D Carton Erectors</a>
+        <a href="https://primelabeler.com/en/integrated-packaging-lines/">Single-PLC Integrated Fold-Tape-Label Lines</a>
+        <a href="https://primelabeler.com/de/">Deutsch (DACH)</a>
+        <a href="https://primelabeler.com/nl/">Nederlands</a>
+        <a href="https://primelabeler.com/es/">Español</a>
+        <a href="https://www.dgyxauto.com/">中文官网 (www.dgyxauto.com)</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span><strong>Dongguan Yixing Automation Equipment Co., Ltd. (东莞市壹星自动化设备有限公司)</strong> · Workshop: 4/F Damaozi Cultural & Creative Park Center, Shipai Town, Dongguan · Statutory Reg: Rm 406, Bldg 3, No. 91 Shipai Ave West · ICP: 粤ICP备2026158137号-1</span>
+    </div>
+  </footer>
+
+  <script>
+    let lang = 'en';
+    const siteBase = () => lang === 'en' ? 'https://primelabeler.com/en' : 'https://www.dgyxauto.com';
+
+    function calcTol() {
+      const t = parseFloat(document.getElementById('tolTarget').value) || 0;
+      const p = parseFloat(document.getElementById('tolPart').value) || 0;
+      const m = parseFloat(document.getElementById('tolMat').value) || 0;
+      const rssSq = t * t - (p * p + m * m);
+      const rssMach = rssSq > 0 ? Math.sqrt(rssSq) : 0;
+      const wcMach = Math.max(0, t - (p + m));
+      let recEn, recZh, slug;
+      if (rssMach <= 0.08) {
+        recEn = 'Dual-Camera CCD Vision Labeling Stage (±0.05 mm repeatability)';
+        recZh = '双镜头 CCD 视觉贴标机（设备重复精度 ±0.05mm）';
+        slug = '/products/vision-labeler/';
+      } else if (rssMach <= 0.55) {
+        recEn = 'Precision Jig Labeler (±0.3 mm) or CCD Vision Tape Applicator (±0.5 mm)';
+        recZh = '高精度治具贴标机 (±0.3mm) 或 CCD 视觉贴胶机 (±0.5mm)';
+        slug = '/tape-applicators/';
+      } else {
+        recEn = 'High-Speed Bottle Labeler (60–200 pcs/min) or Multi-Axis Tape Fixture (±1.0 mm)';
+        recZh = '高速圆瓶/双侧面贴标机 (60–200瓶/分) 或多轴贴胶机 (±1.0mm)';
+        slug = '/labeling-machines/';
+      }
+      const el = document.getElementById('tolOut');
+      if (rssSq <= 0) {
+        el.innerHTML = lang === 'en'
+          ? `<strong>Incoming part + die-cut stack-up (±${Math.hypot(p, m).toFixed(2)} mm RSS) exceeds target ±${t.toFixed(2)} mm!</strong> Tighten incoming tolerances or evaluate <a href="${siteBase()}/products/vision-labeler/">±0.05 mm fiducial CCD vision alignment</a>.`
+          : `<strong>来料与模切公差均方根 (±${Math.hypot(p, m).toFixed(2)} mm) 已超出允许总偏差！</strong>需收紧来料公差或采用认基准边的 <a href="${siteBase()}/products/vision-labeler/">±0.05mm 双镜头视觉贴标机</a>。`;
+      } else {
+        el.innerHTML = lang === 'en'
+          ? `Allowable Machine Repeatability (RSS): <strong>±${rssMach.toFixed(2)} mm</strong> (Worst-Case: ±${wcMach.toFixed(2)} mm)<br/>Matched Class: <a href="${siteBase()}${slug}">${recEn}</a>`
+          : `允许设备自身偏差 (RSS均方根): <strong>±${rssMach.toFixed(2)} mm</strong> (极值法: ±${wcMach.toFixed(2)} mm)<br/>匹配机型路线: <a href="${siteBase()}${slug}">${recZh}</a>`;
+      }
+    }
+
+    function calcTape() {
+      const len = parseFloat(document.getElementById('tapeLen').value) || 30;
+      const cnt = parseInt(document.getElementById('tapeCount').value, 10) || 1;
+      const swap = parseFloat(document.getElementById('tapeMode').value) || 3.0;
+      const meters = parseFloat(document.getElementById('rollMeters').value) || 50;
+      const perStripSec = (len / 500.0) + 0.38;
+      const cycleSec = swap + cnt * perStripSec;
+      const pph = Math.round((3600 / cycleSec) * 0.88);
+      const partsPerRoll = Math.floor((meters * 1000) / (len * cnt));
+      const warn = len < 30
+        ? (lang === 'en' ? '<br/><span style="color:#b45309">Note: Standard pneumatic heads require ≥30 mm cut length; <30 mm requires custom sample evaluation.</span>' : '<br/><span style="color:#b45309">提示：画册标准气动胶头需 ≥30mm 裁切长度；短于 30mm 需寄样评估非标方案。</span>')
+        : '';
+      document.getElementById('tapeOut').innerHTML = lang === 'en'
+        ? `Est. Cycle: <strong>${cycleSec.toFixed(2)} s/pc</strong> (~<strong>${pph} pcs/h</strong> at 88% utilization)<br/>Yield per ${meters}m Roll: <strong>${partsPerRoll} workpieces</strong> · <a href="${siteBase()}/tape-applicators/">500 mm/s Tape Applicator Hub</a>${warn}`
+        : `预估单件节拍: <strong>${cycleSec.toFixed(2)} 秒/件</strong> (按 88% 综合效率约 <strong>${pph} 件/小时</strong>)<br/>单卷 ${meters}m 可贴工件: <strong>${partsPerRoll} 件</strong> · <a href="${siteBase()}/tape-applicators/">查看壹星贴胶机中心页</a>${warn}`;
+    }
+
+    function calcBox() {
+      const type = document.getElementById('boxType').value;
+      const L = parseFloat(document.getElementById('boxL').value) || 0;
+      const W = parseFloat(document.getElementById('boxW').value) || 0;
+      const H = parseFloat(document.getElementById('boxH').value) || 0;
+      const gsm = parseFloat(document.getElementById('boxGsm').value) || 350;
+      const blankX = Math.round(2 * L + 2 * W + 35);
+      const blankY = Math.round(H + 2 * W + 30);
+      let model = 'YX-KB800 / YX-KB1800 Vertical Lock-Bottom Erector (20–50 boxes/min, ±0.5 mm)';
+      if (type === 'kb' && (L > 220 || gsm >= 420)) model = 'YX-KB3600 Servo Crash-Lock Erector (30–60 boxes/min, ±0.5 mm)';
+      if (type === 'cs') model = L <= 200 ? 'YX-CS800 / YX-CS4500 Tuck-End Erector (20–75 boxes/min, ±0.3 mm)' : 'Custom Extended-Stroke 3D Tuck-End Erector';
+      if (type === 'ch') model = (blankX <= 650 && blankY <= 520) ? 'YX-CH1000 Color Box / YX-CH2000 & YX-CH4000 FEFCO 0427 Mailer Former (15–70 boxes/min, ±0.3–0.5 mm)' : 'Custom Wide-Envelope FEFCO 0427 Former';
+      const gsmNote = (gsm < 250 || gsm > 600)
+        ? (lang === 'en' ? '<br/><span style="color:#b45309">Outside standard 250–600 gsm envelope — mail flat blanks for trial run.</span>' : '<br/><span style="color:#b45309">克重超出常规 250–600g/m² 区间，建议顺丰寄平张纸坯试机。</span>')
+        : '';
+      document.getElementById('boxOut').innerHTML = lang === 'en'
+        ? `Approx. Flat Blank Envelope: <strong>~${blankX} × ${blankY} mm</strong><br/>Matched 3D Erector: <a href="${siteBase()}/box-folding-machines/"><strong>${model}</strong></a>${gsmNote}`
+        : `估算展开纸坯包络: <strong>约 ${blankX} × ${blankY} mm</strong><br/>匹配立体折盒系列: <a href="${siteBase()}/box-folding-machines/"><strong>${model}</strong></a>${gsmNote}`;
+    }
+
+    function applyLang() {
+      document.querySelectorAll('[data-en]').forEach(el => {
+        el.textContent = el.getAttribute(lang === 'en' ? 'data-en' : 'data-zh');
+      });
+      calcTol(); calcTape(); calcBox();
+    }
+
+    document.getElementById('langToggle').addEventListener('click', () => {
+      lang = lang === 'en' ? 'zh' : 'en';
+      applyLang();
+    });
+    ['tolTarget','tolPart','tolMat'].forEach(id => document.getElementById(id).addEventListener('input', calcTol));
+    ['tapeLen','tapeCount','tapeMode','rollMeters'].forEach(id => document.getElementById(id).addEventListener('input', calcTape));
+    ['boxType','boxL','boxW','boxH','boxGsm'].forEach(id => document.getElementById(id).addEventListener('input', calcBox));
+    applyLang();
+  </script>
+</body>
+</html>
